@@ -11,12 +11,19 @@ const getBooksHandler = (req, res) => {
 };
 
 const addBookHandler = (req, res) => {
-  const { name, publisher } = req.body;
+  const { name, year, author, summary, publisher } = req.body;
 
   if(!name) {
     return res.status(400).json({
       status: 'fail',
       message: 'Failed to add book. Please add a book name',
+    });
+  }
+  
+  if(!summary) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Failed to add book. Please add a book summary',
     });
   }
   
@@ -31,7 +38,7 @@ const addBookHandler = (req, res) => {
   const insertedAt = new Date().toISOString();
   const updatedAt = insertedAt;
 
-  const newBook = { id, name, publisher, insertedAt, updatedAt };
+  const newBook = { id, name, year, author, summary, publisher, insertedAt, updatedAt };
 
   books.push(newBook);
 
@@ -75,6 +82,42 @@ const getBookByIdHandler = (req, res) => {
   });
 };
 
+const editBookByIdHandler = (req, res) => {
+  const { id } = req.params;
+  const { name, year, author, summary, publisher } = req.body;
+  const updatedAt = new Date().toISOString();
+  const index = books.findIndex((book) => book.id === id);
+
+  if(!name) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Failed to update book. Please add a book name',
+    });
+  }
+  
+  if(!summary) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Failed to update book. Please add a book summary',
+    });
+  }
+
+  if(index !== -1) {
+    books[index] = {...books[index], name, year, author, summary, publisher, updatedAt};
+
+    return res.status(200).json({
+      status: 'success',
+      message: `Book with id ${id} updated successfully`,
+    });
+  }
+
+  return res.status(404).json({
+    status: 'fail',
+    message: `Book with id ${id} not found`
+  });
+
+};
+
 const deleteBookHandler = (req, res) => {
   const { id } = req.params; // this access the route parameter to request get an id from there
 
@@ -96,4 +139,4 @@ const deleteBookHandler = (req, res) => {
 
 };
 
-module.exports = { getBooksHandler, addBookHandler, deleteBookHandler, getBookByIdHandler };
+module.exports = { getBooksHandler, addBookHandler, deleteBookHandler, getBookByIdHandler, editBookByIdHandler };
