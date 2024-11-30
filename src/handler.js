@@ -2,7 +2,7 @@ const { nanoid } = require('nanoid');
 const books = require('./data')
 
 const getBooksHandler = (req, res) => {
-  res.json({
+  return res.json({
     status: 'success',
     data: {
       books: books
