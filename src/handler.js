@@ -1,9 +1,6 @@
 const { nanoid } = require('nanoid')
 const books = require('./data')
 
-const id = nanoid(16);
-const insertedAt = new Date().toISOString();
-
 const getBooksHandler = (req, res) => {
   const { name, year, author, publisher } = req.query;
   let filteredBooks = books;
@@ -22,7 +19,8 @@ const getBooksHandler = (req, res) => {
   }
 
   if (year) {
-    filteredBooks = filteredBooks.filter((book) => book.year === year);
+    const yearNumber = Number(year);
+    filteredBooks = filteredBooks.filter((book) => book.year === yearNumber);
 
     if (!filteredBooks.length) {
       return res.status(404).json({
@@ -98,6 +96,8 @@ const addBookHandler = (req, res) => {
     });
   }
 
+  const id = nanoid(16);
+  const insertedAt = new Date().toISOString();
   const updatedAt = insertedAt;
 
   const newBook = { id, name, year, author, summary, publisher, insertedAt, updatedAt };
@@ -125,26 +125,69 @@ const addBookHandler = (req, res) => {
 };
 
 const bulkAddBooksHandler = (req, res) => {
-  const request = req.body;
+  const requests = req.body;
 
-  if (!Array.isArray(request)) {
+  if (!Array.isArray(requests)) {
     return res.status(400).json({
       status: 'fail',
       message: 'Request body must be an array'
     });
   }
 
-  request.forEach(requestData => {
-    const { name, year, author, summary, publisher } = requestData;
+  const errors = [];
+  const successfulBooks = [];
+
+  requests.forEach(requestData => {
+    const { name, year, author, summary, publisher } = requestData; 
+    
+    if(!name) {
+      errors.push({ status: 'fail', message: 'Failed to add book. Please add a book name', data: requestData });
+      return;
+    }
+
+    if(!year) {
+      errors.push({ status: 'fail', message: 'Failed to add book. Please add a book year', data: requestData });
+      return;
+    }
+
+    if(!author) {
+      errors.push({ status: 'fail', message: 'Failed to add book. Please add a book author name', data: requestData });
+      return;
+    }
+
+    if(!summary) {
+      errors.push({ status: 'fail', message: 'Failed to add book. Please add a book summary', data: requestData });
+      return;
+    }
+
+    if(!publisher) {
+      errors.push({ status: 'fail', message: 'Failed to add book. Please add a book publisher', data: requestData });
+      return;
+    }
+    
+    const id = nanoid(16);
+    const insertedAt = new Date().toISOString();
     const updatedAt = insertedAt;
 
     const newBook = { id, name, year, author, summary, publisher, insertedAt, updatedAt };
+    
     books.push(newBook);
+    successfulBooks.push(newBook);
   });
+
+  if (errors.length > 0) {
+    return res.status(400).json({
+      status: 'partial',
+      message: 'Some books failed to add',
+      errors: errors,
+      successfulBooks: successfulBooks
+    });
+  }
 
   res.status(201).json({
     status: 'success',
-    message: 'Books added successfully'
+    message: 'Books added successfully',
+    data: successfulBooks
   });
 };
 

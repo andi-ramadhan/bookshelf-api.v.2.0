@@ -11,7 +11,8 @@ const {
 
 
 router.get('/', getBooksHandler);
-router.post('/', addBookHandler, bulkAddBooksHandler);
+router.post('/', addBookHandler);
+router.post('/bulk-add', bulkAddBooksHandler);
 router.get('/:id', getBookByIdHandler);
 router.put('/:id', editBookByIdHandler);
 router.delete('/:id', deleteBookHandler);
