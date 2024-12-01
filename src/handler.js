@@ -1,11 +1,68 @@
-const { nanoid } = require('nanoid');
+const { nanoid } = require('nanoid')
 const books = require('./data')
 
+const id = nanoid(16);
+const insertedAt = new Date().toISOString();
+
 const getBooksHandler = (req, res) => {
+  const { name, year, author, publisher } = req.query;
+  let filteredBooks = books;
+
+  if (name) {
+    filteredBooks = filteredBooks.filter((book) => 
+      book.name && book.name.toLowerCase().includes(name.toLowerCase())
+    );
+
+    if (!filteredBooks.length) {
+      return res.status(404).json({
+        status: 'fail',
+        message: `Book with name ${name} not found`,
+      });
+    }
+  }
+
+  if (year) {
+    filteredBooks = filteredBooks.filter((book) => book.year === year);
+
+    if (!filteredBooks.length) {
+      return res.status(404).json({
+        status: 'fail',
+        message: `Book with year ${year} not found`,
+      });
+    }
+  }
+
+  if (author) {
+    filteredBooks = filteredBooks.filter((book) => 
+      book.author && book.author.toLowerCase().includes(author.toLowerCase())
+    );
+
+    if (!filteredBooks.length) {
+      return res.status(404).json({
+        status: 'fail',
+        message: `Book with publisher ${author} not found`,
+      });
+    }
+  }
+
+  if (publisher) {
+    filteredBooks = filteredBooks.filter((book) => 
+      book.publisher && book.publisher.toLowerCase().includes(publisher.toLowerCase())
+    );
+
+    if (!filteredBooks.length) {
+      return res.status(404).json({
+        status: 'fail',
+        message: `Book with publisher ${publisher} not found`,
+      });
+    }
+  }
+  
+
   return res.json({
     status: 'success',
     data: {
-      books: books
+      books: filteredBooks
     }
   });
 };
@@ -17,6 +74,13 @@ const addBookHandler = (req, res) => {
     return res.status(400).json({
       status: 'fail',
       message: 'Failed to add book. Please add a book name',
+    });
+  }
+
+  if(!author) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Failed to add book. Please add a book author name',
     });
   }
   
@@ -34,8 +98,6 @@ const addBookHandler = (req, res) => {
     });
   }
 
-  const id = nanoid(16);
-  const insertedAt = new Date().toISOString();
   const updatedAt = insertedAt;
 
   const newBook = { id, name, year, author, summary, publisher, insertedAt, updatedAt };
@@ -59,6 +121,30 @@ const addBookHandler = (req, res) => {
   return res.status(500).json({
     status: 'fail',
     message: 'Failed to add book, an unexpected error occured',
+  });
+};
+
+const bulkAddBooksHandler = (req, res) => {
+  const request = req.body;
+
+  if (!Array.isArray(request)) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Request body must be an array'
+    });
+  }
+
+  request.forEach(requestData => {
+    const { name, year, author, summary, publisher } = requestData;
+    const updatedAt = insertedAt;
+
+    const newBook = { id, name, year, author, summary, publisher, insertedAt, updatedAt };
+    books.push(newBook);
+  });
+
+  res.status(201).json({
+    status: 'success',
+    message: 'Books added successfully'
   });
 };
 
@@ -139,4 +225,11 @@ const deleteBookHandler = (req, res) => {
 
 };
 
-module.exports = { getBooksHandler, addBookHandler, deleteBookHandler, getBookByIdHandler, editBookByIdHandler };
+module.exports = {
+  getBooksHandler,
+  addBookHandler,
+  deleteBookHandler,
+  getBookByIdHandler,
+  editBookByIdHandler,
+  bulkAddBooksHandler
+};
