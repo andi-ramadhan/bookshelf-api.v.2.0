@@ -5,6 +5,7 @@ const getBooksHandler = (req, res) => {
   const { name, year, author, publisher } = req.query;
   let filteredBooks = books;
 
+//Query Path Request
   if (name) {
     filteredBooks = filteredBooks.filter((book) => 
       book.name && book.name.toLowerCase().includes(name.toLowerCase())
