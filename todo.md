@@ -26,4 +26,4 @@
     - [ ] Input Sanitization: Sanitize all inputs to prevent SQL injection and other attacks.
     - [ ] HTTPS: Serve your API over HTTPS for secure communication.
 
-- [ ] Data Validation with express-validator
+- [x] Data Validation with express-validator

@@ -67,41 +67,36 @@ const getBooksHandler = (req, res) => {
 };
 
 const addBookHandler = (req, res) => {
-  const { name, year, author, summary, publisher } = req.body;
-
-  if(!name) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Failed to add book. Please add a book name',
-    });
-  }
-
-  if(!author) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Failed to add book. Please add a book author name',
-    });
-  }
-  
-  if(!summary) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Failed to add book. Please add a book summary',
-    });
-  }
-  
-  if(!publisher) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Failed to add book. Please add a book publisher',
-    });
-  }
+  const {
+    name,
+    year,
+    author,
+    summary,
+    publisher,
+    pageCount,
+    readPage,
+    reading,
+  } = req.body;
 
   const id = nanoid(16);
   const insertedAt = new Date().toISOString();
   const updatedAt = insertedAt;
+  const finished = pageCount === readPage;
 
-  const newBook = { id, name, year, author, summary, publisher, insertedAt, updatedAt };
+  const newBook = {
+    id,
+    name,
+    year,
+    author,
+    summary,
+    publisher,
+    pageCount,
+    readPage,
+    finished,
+    reading,
+    insertedAt,
+    updatedAt
+  };
 
   books.push(newBook);
 
@@ -140,31 +135,6 @@ const bulkAddBooksHandler = (req, res) => {
 
   requests.forEach(requestData => {
     const { name, year, author, summary, publisher } = requestData; 
-    
-    if(!name) {
-      errors.push({ status: 'fail', message: 'Failed to add book. Please add a book name', data: requestData });
-      return;
-    }
-
-    if(!year) {
-      errors.push({ status: 'fail', message: 'Failed to add book. Please add a book year', data: requestData });
-      return;
-    }
-
-    if(!author) {
-      errors.push({ status: 'fail', message: 'Failed to add book. Please add a book author name', data: requestData });
-      return;
-    }
-
-    if(!summary) {
-      errors.push({ status: 'fail', message: 'Failed to add book. Please add a book summary', data: requestData });
-      return;
-    }
-
-    if(!publisher) {
-      errors.push({ status: 'fail', message: 'Failed to add book. Please add a book publisher', data: requestData });
-      return;
-    }
     
     const id = nanoid(16);
     const insertedAt = new Date().toISOString();
@@ -214,38 +184,45 @@ const getBookByIdHandler = (req, res) => {
 
 const editBookByIdHandler = (req, res) => {
   const { id } = req.params;
-  const { name, year, author, summary, publisher } = req.body;
-  const updatedAt = new Date().toISOString();
-  const index = books.findIndex((book) => book.id === id);
+  const {
+    name,
+    year,
+    author,
+    summary,
+    publisher,
+    pageCount,
+    readPage,
+    reading,
+  } = req.body;
 
-  if(!name) {
-    return res.status(400).json({
+  const bookIndex = books.findIndex((book) => book.id === id);
+
+  if(bookIndex === -1) {
+    return res.status(404).json({
       status: 'fail',
-      message: 'Failed to update book. Please add a book name',
-    });
-  }
-  
-  if(!summary) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Failed to update book. Please add a book summary',
+      message: `Book with id ${id} not found`
     });
   }
 
-  if(index !== -1) {
-    books[index] = {...books[index], name, year, author, summary, publisher, updatedAt};
 
-    return res.status(200).json({
-      status: 'success',
-      message: `Book with id ${id} updated successfully`,
-    });
-  }
+  books[bookIndex] = {
+    ...books[bookIndex],
+    name,
+    year,
+    author,
+    summary,
+    publisher,
+    pageCount,
+    readPage,
+    reading,
+    updatedAt: new Date().toISOString()
+  };
 
-  return res.status(404).json({
-    status: 'fail',
-    message: `Book with id ${id} not found`
+  res.status(200).json({
+    status: 'success',
+    message: `Book updated successfully`,
+    data: books[bookIndex]
   });
-
 };
 
 const deleteBookHandler = (req, res) => {
