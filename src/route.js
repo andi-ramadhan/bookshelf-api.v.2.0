@@ -9,11 +9,12 @@ const {
   bulkAddBooksHandler
 } = require('./handler')
 
-const { validateBook } = require('./validator')
+const { validateBook } = require('./validator');
+const { validateBulkBooks } = require('./bulk-validator');
 
 router.get('/', getBooksHandler);
 router.post('/', validateBook, addBookHandler);
-router.post('/bulk-add', validateBook, bulkAddBooksHandler);
+router.post('/bulk-add', validateBulkBooks, bulkAddBooksHandler);
 router.get('/:id', getBookByIdHandler);
 router.put('/:id', validateBook, editBookByIdHandler);
 router.delete('/:id', deleteBookHandler);

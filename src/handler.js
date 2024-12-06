@@ -134,13 +134,13 @@ const bulkAddBooksHandler = (req, res) => {
   const successfulBooks = [];
 
   requests.forEach(requestData => {
-    const { name, year, author, summary, publisher } = requestData; 
+    const { name, year, author, summary, reading, publisher } = requestData; 
     
     const id = nanoid(16);
     const insertedAt = new Date().toISOString();
     const updatedAt = insertedAt;
 
-    const newBook = { id, name, year, author, summary, publisher, insertedAt, updatedAt };
+    const newBook = { id, name, year, author, summary, publisher, reading, insertedAt, updatedAt };
     
     books.push(newBook);
     successfulBooks.push(newBook);

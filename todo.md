@@ -16,7 +16,7 @@
     - [ ] Reading History: Keep a history of books read with timestamps.
 
 - [ ] Recommendations:
-    Provide book recommendations based on users’ reading history and preferences.
+    Provide book recommendations based on users reading history and preferences.
     - [ ] Similar Books: Suggest books similar to the ones users have read.
     - [ ] Popular Books: Recommend books that are highly rated or frequently read by other users.
 
