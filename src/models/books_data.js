@@ -5,7 +5,7 @@ const { nanoid } = require('nanoid');
 const Book = sequelize.define('books_data', {
   id: {
     type: DataTypes.STRING,
-    defaultValue: nanoid,
+    defaultValue: () => nanoid(),
     primaryKey: true
   },
   name: {
@@ -45,7 +45,8 @@ const Book = sequelize.define('books_data', {
   },
   finished: {
     type: DataTypes.BOOLEAN,
-    allowNull: false
+    allowNull: false,
+    defaultValue: false
   },
   reading: {
     type: DataTypes.BOOLEAN,
@@ -62,7 +63,12 @@ const Book = sequelize.define('books_data', {
 }, {
   timestamps: true,
   createdAt: 'insertedAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  hooks: {
+    beforeSave: (book) => {
+      book.finished = book.readPage === book.pageCount;
+    }
+  }
 });
 
 module.exports = Book;
