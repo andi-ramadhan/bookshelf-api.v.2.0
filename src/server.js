@@ -1,14 +1,9 @@
 const express = require('express');
 const app = express();
-const bookRoutes = require('./route');
+const bookRoutes = require('./routes/route');
 
 // Middleware to parse JSON bodies
 app.use(express.json());
-
-// Example route
-app.get('/', (req, res) => {
-  res.send('Hello World');
-})
 
 app.use('/books', bookRoutes);
 

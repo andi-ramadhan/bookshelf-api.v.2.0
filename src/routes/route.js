@@ -7,10 +7,10 @@ const {
   getBookByIdHandler,
   editBookByIdHandler,
   bulkAddBooksHandler
-} = require('./handler')
+} = require('../controlles/handler')
 
-const { validateBook } = require('./validator');
-const { validateBulkBooks } = require('./bulk-validator');
+const { validateBook } = require('../config/validator');
+const { validateBulkBooks } = require('../config/bulk-validator');
 
 router.get('/', getBooksHandler);
 router.post('/', validateBook, addBookHandler);

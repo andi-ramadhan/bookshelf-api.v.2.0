@@ -1,5 +1,5 @@
 const { nanoid } = require('nanoid')
-const books = require('./data')
+const books = require('../config/database')
 
 const getBooksHandler = (req, res) => {
   const { name, year, author, publisher } = req.query;
