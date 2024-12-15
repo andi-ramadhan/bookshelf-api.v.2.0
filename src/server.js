@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.use('/books', bookRoutes);
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT;
 
 app.listen(port, async () => {
   console.log(`Server listening on http://localhost:${port}`)

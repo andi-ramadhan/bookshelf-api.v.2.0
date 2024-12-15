@@ -41,7 +41,7 @@ exports.getAllBooks = async (req, res) => {
       if (booksByName.length === 0) {
         return res.status(404).json({
           status: 'fail',
-          message: `Books with name ${name} not found`,
+          message: `Books not found`,
         });
       }
 
@@ -68,7 +68,7 @@ exports.getAllBooks = async (req, res) => {
     if (author) {
       const booksByAuthor = await Book.findAll ({
         where: {
-          name: {
+          author: {
             [Op.iLike]: `%${author}%`
           }
         }
@@ -87,7 +87,7 @@ exports.getAllBooks = async (req, res) => {
     if (publisher) {
       const booksByPublisher = await Book.findAll ({
         where: {
-          name: {
+          publisher: {
             [Op.iLike]: `%${publisher}%`
           }
         }
@@ -127,6 +127,8 @@ exports.getAllBooks = async (req, res) => {
           message: `There is no book with ${finished} status`,
         });
       }
+
+      return res.json(booksByFinished);
     }
 
     if (reading !== undefined) {
@@ -157,7 +159,7 @@ exports.getAllBooks = async (req, res) => {
       return res.json(booksByReading);
     }
 
-    const books = await Book.findAll({ order: [['id']] });
+    const books = await Book.findAll();
 
     if (books.length === 0) {
       return res.status(404).json({
@@ -169,5 +171,67 @@ exports.getAllBooks = async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ error: error.message});
+  }
+};
+
+exports.getBookById = async (req, res) => {
+  const { id } = req.params; 
+  
+  try {
+    const book = await Book.findOne({ where: { id: id }});
+  
+    if(book) {
+      return res.status(200).json({
+        status: 'success',
+        data: {
+          book: book
+        }
+      });
+    }
+  
+    return res.status(404).json({
+      status: 'fail',
+      message: `Book with id ${id} not found`
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+exports.editItemById = async (req, res) => {
+  const { id } = req.params;
+  const bookData = {...req.body};
+
+  try {
+    const [updated] = await Book.update(
+      bookData,
+      {
+        where: { id: id }
+      }
+    );
+    if (updated) {
+      const updatedBook = await Book.findOne({ where: { id: id } });
+      res.status(200).json({ item: updatedBook });
+    } else {
+      res.status(404).json({ error: 'Book not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.deleteBookById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleted = await Book.destroy({
+      where: { id: id },
+    });
+    if (deleted) {
+      res.status(200).json({ message: 'Book deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'Book not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
