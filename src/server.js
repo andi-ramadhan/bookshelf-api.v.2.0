@@ -1,13 +1,19 @@
+require ('dotenv').config();
 const express = require('express');
 const app = express();
+const authRoutes = require('./routes/auth');
 const bookRoutes = require('./routes/routes');
 const sequelize = require('./config/database');
-require ('dotenv').config();
+
 
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-app.use('/books', bookRoutes);
+// Authentication routes
+app.use('/auth', authRoutes);
+
+// Protected routes
+app.use('/', bookRoutes);
 
 const port = process.env.PORT;
 
