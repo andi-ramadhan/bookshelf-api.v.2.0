@@ -1,12 +1,16 @@
+/* eslint-disable no-unused-vars */
 const { nanoid } = require('nanoid');
-const Book = require('../models/books_data');
 const { Op } = require('sequelize');
+const Book = require('../models/books_data');
+const User = require('../models/user');
 
 exports.addBook = async (req, res) => {
   try{
+    const { userId } = req.user;
     const newBook = {
-      id: nanoid(),
-      ...req.body
+      bookId: nanoid(),
+      ...req.body,
+      userId
     };
 
     const book = await Book.create(newBook);
@@ -15,8 +19,9 @@ exports.addBook = async (req, res) => {
       status: 'success',
       message: 'Book added successfully',
       data: {
-        BookId: book.id,
-        BookName: book.name,
+        BookId: book.bookId,
+        UserId: book.userId,
+        BookName: book.title,
         DateAdded: book.insertedAt
       }
     });
@@ -26,26 +31,26 @@ exports.addBook = async (req, res) => {
 };
 
 exports.getAllBooks = async (req, res) => {
-  let { name, year, author, publisher, finished, reading } = req.query;
+  let { title, year, author, publisher, finished, reading } = req.query;
 
   try{
-    if (name) {
-      const booksByName = await Book.findAll ({
+    if (title) {
+      const booksByTitle = await Book.findAll ({
         where: {
-          name: {
-            [Op.iLike]: `%${name}%`
+          title: {
+            [Op.iLike]: `%${title}%`
           }
         }
       });
 
-      if (booksByName.length === 0) {
+      if (booksByTitle.length === 0) {
         return res.status(404).json({
           status: 'fail',
           message: `Books not found`,
         });
       }
 
-      return res.json(booksByName);
+      return res.json(booksByTitle);
     }
 
     if (year) {
@@ -200,7 +205,7 @@ exports.getBookById = async (req, res) => {
 
 exports.editItemById = async (req, res) => {
   const { id } = req.params;
-  const bookData = {...req.body};
+  const { id: bodyId, ...bookData } = req.body;
 
   try {
     const [updated] = await Book.update(
@@ -209,6 +214,7 @@ exports.editItemById = async (req, res) => {
         where: { id: id }
       }
     );
+
     if (updated) {
       const updatedBook = await Book.findOne({ where: { id: id } });
       res.status(200).json({ item: updatedBook });

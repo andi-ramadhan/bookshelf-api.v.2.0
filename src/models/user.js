@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const { nanoid } = require('nanoid');
 
 const User = sequelize.define('users', {
-  id: {
+  userId: {
     type: DataTypes.STRING,
     defaultValue: () => nanoid(),
     primaryKey: true,

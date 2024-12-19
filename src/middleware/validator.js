@@ -1,7 +1,7 @@
 const { body, validationResult } = require('express-validator');
 
 const validateBook = [
-  body('name').isString().withMessage('Name must be a string').notEmpty().withMessage('Name is required'),
+  body('title').isString().withMessage('Title must be a string').notEmpty().withMessage('Title is required'),
   body('year').isInt({ min: 0 }).withMessage('Year must be a non-negative number'),
   body('author').isString().withMessage('Author must be a string'),
   body('summary').isString().withMessage('Summary must be a string'),

@@ -2,7 +2,6 @@
     Implement user accounts so users can log in, track their reading progress, and manage their books.
     - [x] JWT Authentication: Use JSON Web Tokens (JWT) for secure authentication.
     - [x] User Roles: Implement roles like admin and user to manage different access levels.
-    - Note: Need to add 'admin' role, DELETE and PUT request not tested yet
 
 - [ ] Enhanced Book Metadata:
     Add more metadata to books to provide richer information and better filtering options.

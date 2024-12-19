@@ -3,14 +3,22 @@ const sequelize = require('../config/database');
 const { nanoid } = require('nanoid');
 
 const Book = sequelize.define('books_data', {
-  id: {
+  bookId: {
     type: DataTypes.STRING,
     defaultValue: () => nanoid(),
     primaryKey: true
   },
-  name: {
+  title: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  userId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    references: {
+      model: 'users', // Name of the Users table
+      key: 'userId' // Column name in Users table
+    }
   },
   year: {
     type: DataTypes.INTEGER,
