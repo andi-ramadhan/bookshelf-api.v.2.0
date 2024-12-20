@@ -4,16 +4,17 @@ const app = express();
 const authRoutes = require('./routes/auth');
 const bookRoutes = require('./routes/routes');
 const sequelize = require('./config/database');
+const { checkBlacklistedToken } = require('./middleware/auth');
 
 
 // Middleware to parse JSON bodies
 app.use(express.json());
 
 // Authentication routes
-app.use('/auth', authRoutes);
+app.use('/auth' ,authRoutes);
 
 // Protected routes
-app.use('/', bookRoutes);
+app.use('/', checkBlacklistedToken, bookRoutes);
 
 const port = process.env.PORT;
 

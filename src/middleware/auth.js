@@ -1,22 +1,17 @@
-/* eslint-disable no-unused-vars */
 const jwt = require('jsonwebtoken');
+const BlacklistedToken = require('../models/blacklisted_tokens');
 
 const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
+  const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) {
-    return res.status(401).json({ message: 'Access Denied' });
-  }
+  if (token == null) return res.status(401).json({ message: 'Access Denied' });
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    console.log('Decoded token:', req.user);
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ message: 'Invalid Token' });
+    req.user = user;
     next();
-  } catch (error) {
-    res.status(400).json({ message: 'Invalid Token' });
-  }
+  });
 };
 
 const authorizeRole = (role) => {
@@ -28,7 +23,30 @@ const authorizeRole = (role) => {
   };
 };
 
+const checkBlacklistedToken = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ message: 'No token provided' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Invalid token format' });
+    }
+
+    const blacklistedToken = await BlacklistedToken.findOne({ where: { token } });
+    if (blacklistedToken) {
+      return res.status(401).json({ message: 'Invalid Token' });
+    }
+    next();
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   authenticateToken,
-  authorizeRole
+  authorizeRole,
+  checkBlacklistedToken
 };
