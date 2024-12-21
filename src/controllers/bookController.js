@@ -31,6 +31,7 @@ exports.addBook = async (req, res) => {
 };
 
 exports.getAllBooks = async (req, res) => {
+  const { userId } = req.user;
   let { title, year, author, publisher, finished, reading } = req.query;
 
   try{
@@ -39,7 +40,8 @@ exports.getAllBooks = async (req, res) => {
         where: {
           title: {
             [Op.iLike]: `%${title}%`
-          }
+          }, 
+          userId: userId
         }
       });
 
@@ -56,7 +58,7 @@ exports.getAllBooks = async (req, res) => {
     if (year) {
       const booksByYear = await Book.findAll ({
         where: {
-          year: year,
+          year: year, userId: userId,
         }
       });
 
@@ -75,7 +77,8 @@ exports.getAllBooks = async (req, res) => {
         where: {
           author: {
             [Op.iLike]: `%${author}%`
-          }
+          },
+          userId: userId,
         }
       });
 
@@ -94,7 +97,8 @@ exports.getAllBooks = async (req, res) => {
         where: {
           publisher: {
             [Op.iLike]: `%${publisher}%`
-          }
+          },
+          userId: userId,
         }
       });
 
@@ -122,7 +126,7 @@ exports.getAllBooks = async (req, res) => {
       
       const booksByFinished = await Book.findAll({
         where: {
-          finished: finished
+          finished: finished, userId: userId,
         }
       });
 
@@ -150,7 +154,7 @@ exports.getAllBooks = async (req, res) => {
 
       const booksByReading = await Book.findAll({
         where: {
-          reading: reading
+          reading: reading, userId: userId,
         }
       });
 
@@ -164,7 +168,11 @@ exports.getAllBooks = async (req, res) => {
       return res.json(booksByReading);
     }
 
-    const books = await Book.findAll();
+    const books = await Book.findAll({
+      where: {
+        userId: userId
+      }
+    });
 
     if (books.length === 0) {
       return res.status(404).json({
@@ -180,10 +188,11 @@ exports.getAllBooks = async (req, res) => {
 };
 
 exports.getBookById = async (req, res) => {
-  const { id } = req.params; 
+  const { id } = req.params;
+  const { userId } = req.user; 
   
   try {
-    const book = await Book.findOne({ where: { id: id }});
+    const book = await Book.findOne({ where: { bookId: id, userId: userId } });
   
     if(book) {
       return res.status(200).json({
@@ -205,19 +214,20 @@ exports.getBookById = async (req, res) => {
 
 exports.editItemById = async (req, res) => {
   const { id } = req.params;
-  const { id: bodyId, ...bookData } = req.body;
-
+  const { userId } = req.user;
+  const { bookId: bodyId, ...bookData } = req.body;
+  
   try {
     const [updated] = await Book.update(
       bookData,
       {
-        where: { id: id }
+        where: { bookId: id, userId: userId }
       }
     );
 
     if (updated) {
-      const updatedBook = await Book.findOne({ where: { id: id } });
-      res.status(200).json({ item: updatedBook });
+      const updatedBook = await Book.findOne({ where: { bookId: id } });
+      res.status(200).json({ message: 'Book updated successfully', book: updatedBook });
     } else {
       res.status(404).json({ error: 'Book not found' });
     }
