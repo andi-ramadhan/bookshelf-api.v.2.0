@@ -1,5 +1,6 @@
 require ('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const authRoutes = require('./routes/auth');
 const bookRoutes = require('./routes/routes');
@@ -10,6 +11,9 @@ const { checkBlacklistedToken } = require('./middleware/auth');
 // Middleware to parse JSON bodies
 app.use(express.json());
 
+// Enable CORS for all routes
+app.use(cors());
+
 // Authentication routes
 app.use('/auth' ,authRoutes);
 
@@ -18,7 +22,7 @@ app.use('/', checkBlacklistedToken, bookRoutes);
 
 const port = process.env.PORT;
 
-app.listen(port, async () => {
+const server = app.listen(port, async () => {
   console.log(`Server listening on http://localhost:${port}`)
   try {
     await sequelize.authenticate();
@@ -27,3 +31,11 @@ app.listen(port, async () => {
     console.error('Unable to connect to the database:', error);
   }
 });
+
+if (require.main === module) {
+  // To run server directly
+  server;
+} else {
+  // To export for testing
+  module.exports = server;
+}

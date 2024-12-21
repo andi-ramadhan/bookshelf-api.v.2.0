@@ -1,3 +1,5 @@
+// This code is not used anymore, but I keep it for reference.
+
 const { body, validationResult } = require('express-validator');
 
 const validateBulkBooks = [

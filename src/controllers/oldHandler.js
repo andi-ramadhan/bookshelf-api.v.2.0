@@ -1,3 +1,5 @@
+// This file is not used anymore, but I keep it for reference
+
 const { nanoid } = require('nanoid')
 const books = require('../config/database')
 
