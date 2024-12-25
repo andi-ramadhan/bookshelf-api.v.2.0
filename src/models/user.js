@@ -11,16 +11,15 @@ const User = sequelize.define('users', {
   },
   username: {
     type: DataTypes.STRING,
-    unique: true,
     allowNull: false,
+    unique: true,
   },
   password: {
     type: DataTypes.STRING,
     allowNull:false,
     validate: {
       len: {
-        args: [8, 255],
-        msg: "Password must be at least 8 characters long"
+        args: [8, 255]
       }
     }
   },
@@ -29,12 +28,14 @@ const User = sequelize.define('users', {
     defaultValue: 'user',
     allowNull: false,
   }
-}, {
-  hooks: {
-    beforeCreate: async (user) => {
-      user.password = await bcrypt.hash(user.password, 10);
-    }
-  }
-});
+}, 
+// {
+//   hooks: {
+//     beforeCreate: async (user) => {
+//       user.password = await bcrypt.hash(user.password, 10);
+//     }
+//   }
+// }
+);
 
 module.exports = User;

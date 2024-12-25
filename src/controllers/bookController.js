@@ -21,7 +21,7 @@ exports.addBook = async (req, res) => {
       data: {
         BookId: book.bookId,
         UserId: book.userId,
-        BookName: book.title,
+        Title: book.title,
         DateAdded: book.insertedAt
       }
     });
@@ -31,7 +31,7 @@ exports.addBook = async (req, res) => {
 };
 
 exports.getAllBooks = async (req, res) => {
-  const { userId } = req.user;
+  const { userId, role } = req.user;
   let { title, year, author, publisher, finished, reading } = req.query;
 
   try{
@@ -168,6 +168,11 @@ exports.getAllBooks = async (req, res) => {
       return res.json(booksByReading);
     }
 
+    if(role === 'admin') {
+      const books = await Book.findAll();
+      return res.status(200).json(books);
+    }
+    
     const books = await Book.findAll({
       where: {
         userId: userId
@@ -175,12 +180,12 @@ exports.getAllBooks = async (req, res) => {
     });
 
     if (books.length === 0) {
-      return res.status(404).json({
-        books: books,
+      return res.status(200).json({
+        message: 'No books found',
       });
     }
 
-    res.json(books);
+    res.status(200).json(books);
 
   } catch (error) {
     res.status(500).json({ error: error.message});
@@ -189,7 +194,7 @@ exports.getAllBooks = async (req, res) => {
 
 exports.getBookById = async (req, res) => {
   const { id } = req.params;
-  const { userId } = req.user; 
+  const { userId, role } = req.user; 
   
   try {
     const book = await Book.findOne({ where: { bookId: id, userId: userId } });
@@ -202,10 +207,20 @@ exports.getBookById = async (req, res) => {
         }
       });
     }
+
+    if(role === 'admin') {
+      const book = await Book.findOne({ where: { bookId: id } });
+      return res.status(200).json({
+        status: 'success',
+        data: {
+          book: book
+        }
+      });
+    }
   
     return res.status(404).json({
       status: 'fail',
-      message: `Book with id ${id} not found`
+      message: `Book id not found`
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -238,10 +253,19 @@ exports.editItemById = async (req, res) => {
 
 exports.deleteBookById = async (req, res) => {
   const { id } = req.params;
+  const { userId, role } = req.user; 
   try {
-    const deleted = await Book.destroy({
-      where: { id: id },
-    });
+    let deleted;
+    if (role === 'admin') {
+      deleted = await Book.destroy({
+        where: { bookId: id },
+      });
+    } else {
+      deleted = await Book.destroy({
+        where: { bookId: id, userId: userId },
+      });
+    }
+
     if (deleted) {
       res.status(200).json({ message: 'Book deleted successfully' });
     } else {
