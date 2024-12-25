@@ -7,128 +7,128 @@ afterAll(() => {
 });
 
 let token;
-let userId;
-let bookId;
+// let userId;
+// let bookId;
 
-// describe('Authentication Tests', () => {
-//   describe('User Sign Up', () => {
-//     it('should sign up a new user successfully', async () => {
-//       const response = await request(server)
-//         .post('/auth/signup')
-//         .send({
-//           username: 'usertest',
-//           password: 'passwordtest'
-//         });
+describe('Authentication Tests', () => {
+  describe('User Sign Up', () => {
+    it('should sign up a new user successfully', async () => {
+      const response = await request(server)
+        .post('/auth/signup')
+        .send({
+          username: 'usertest',
+          password: 'passwordtest'
+        });
 
-//       expect(response.statusCode).toBe(201);
-//       expect(response.body.message).toBe('User created successfully');
-//     });
+      expect(response.statusCode).toBe(201);
+      expect(response.body.message).toBe('User created successfully');
+    });
 
-//     it('should not sign up a user with an existing username', async () => {
-//       const response = await request(server)
-//         .post('/auth/signup')
-//         .send({
-//           username: 'usertest',
-//           password: 'passwordtest'
-//         });
+    it('should not sign up a user with an existing username', async () => {
+      const response = await request(server)
+        .post('/auth/signup')
+        .send({
+          username: 'usertest',
+          password: 'passwordtest'
+        });
 
-//       expect(response.statusCode).toBe(400);
-//       expect(response.body.message).toBe('Username already exists');
-//     });
+      expect(response.statusCode).toBe(400);
+      expect(response.body.message).toBe('Username already exists');
+    });
 
-//     it('should not sign up a user with a password less than 8 characters', async () => {
-//       const response = await request(server)
-//         .post('/auth/signup')
-//         .send({
-//           username: 'usertest2',
-//           password: 'pass'
-//         });
+    it('should not sign up a user with a password less than 8 characters', async () => {
+      const response = await request(server)
+        .post('/auth/signup')
+        .send({
+          username: 'usertest2',
+          password: 'pass'
+        });
 
-//       expect(response.statusCode).toBe(400);
-//       expect(response.body.message).toBe('Password must be at least 8 characters long');
-//     });
-//   });
+      expect(response.statusCode).toBe(400);
+      expect(response.body.message).toBe('Password must be at least 8 characters long');
+    });
+  });
 
-//   describe('User Login', () => {
-//     it('should log in an existing user', async () => {
-//       const response = await request(server)
-//         .post('/auth/login')
-//         .send({
-//           username: 'usertest',
-//           password: 'passwordtest'
-//         });
+  describe('User Login', () => {
+    it('should log in an existing user', async () => {
+      const response = await request(server)
+        .post('/auth/login')
+        .send({
+          username: 'usertest',
+          password: 'passwordtest'
+        });
 
-//       expect(response.statusCode).toBe(200);
-//       expect(response.body).toHaveProperty('token');
-//       token = response.body.token;
-//       console.log('Generated Token:', token); // Debug statement
-//     });
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toHaveProperty('token');
+      token = response.body.token;
+      console.log('Generated Token:', token); // Debug statement
+    });
 
-//     it('should not log in a user with invalid credentials', async () => {
-//       const response = await request(server)
-//         .post('/auth/login')
-//         .send({
-//           username: 'usertest',
-//           password: 'wrongpassword'
-//         });
+    it('should not log in a user with invalid credentials', async () => {
+      const response = await request(server)
+        .post('/auth/login')
+        .send({
+          username: 'usertest',
+          password: 'wrongpassword'
+        });
 
-//       expect(response.statusCode).toBe(401);
-//       expect(response.body.message).toBe('Invalid username or password');
-//     });
+      expect(response.statusCode).toBe(401);
+      expect(response.body.message).toBe('Invalid username or password');
+    });
 
-//     it('should not log in a user with missing fields', async () => {
-//       const response = await request(server)
-//         .post('/auth/login')
-//         .send({
-//           username: 'usertest',
-//           password: ''
-//         });
+    it('should not log in a user with missing fields', async () => {
+      const response = await request(server)
+        .post('/auth/login')
+        .send({
+          username: 'usertest',
+          password: ''
+        });
 
-//       expect(response.statusCode).toBe(401);
-//       expect(response.body.message).toBe('Invalid username or password');
-//     });
-//   });
+      expect(response.statusCode).toBe(401);
+      expect(response.body.message).toBe('Invalid username or password');
+    });
+  });
 
-//   describe('Token Validation', () => {
-//     it('should access protected routes with a valid token', async () => {
-//       const loginResponse = await request(server)
-//         .post('/auth/login')
-//         .send({
-//           username: 'usertest',
-//           password: 'passwordtest'
-//         });
+  describe('Token Validation', () => {
+    it('should access protected routes with a valid token', async () => {
+      const loginResponse = await request(server)
+        .post('/auth/login')
+        .send({
+          username: 'usertest',
+          password: 'passwordtest'
+        });
 
-//       token = loginResponse.body.token;
-//       console.log('Token for Validation:', token); // Debug statement
+      token = loginResponse.body.token;
+      console.log('Token for Validation:', token); // Debug statement
 
-//       const response = await request(server)
-//         .get('/books')
-//         .set('Authorization', `Bearer ${token}`);
+      const response = await request(server)
+        .get('/books')
+        .set('Authorization', `Bearer ${token}`);
 
-//       console.log('Response Status:', response.statusCode); // Debug statement
-//       console.log('Response Body:', response.body); // Debug statement
+      console.log('Response Status:', response.statusCode); // Debug statement
+      console.log('Response Body:', response.body); // Debug statement
 
-//       expect(response.statusCode).toBe(200);
-//     });
+      expect(response.statusCode).toBe(200);
+    });
 
-//     it('should not access protected routes with an invalid token', async () => {
-//       const response = await request(server)
-//         .get('/books')
-//         .set('Authorization', `Bearer invalidtoken`);
+    it('should not access protected routes with an invalid token', async () => {
+      const response = await request(server)
+        .get('/books')
+        .set('Authorization', `Bearer invalidtoken`);
 
-//       expect(response.statusCode).toBe(403);
-//       expect(response.body.message).toBe('Invalid token');
-//     });
+      expect(response.statusCode).toBe(403);
+      expect(response.body.message).toBe('Invalid token');
+    });
 
-//     it('should not access protected routes with no token', async () => {
-//       const response = await request(server)
-//         .get('/books');
+    it('should not access protected routes with no token', async () => {
+      const response = await request(server)
+        .get('/books');
 
-//       expect(response.statusCode).toBe(401);
-//       expect(response.body.message).toBe('No token provided');
-//     });
-//   });
-// });
+      expect(response.statusCode).toBe(401);
+      expect(response.body.message).toBe('No token provided');
+    });
+  });
+});
 
 describe('Book Management Tests', () => {
   beforeAll(async () => {
@@ -162,8 +162,8 @@ describe('Book Management Tests', () => {
       expect(response.body.data).toHaveProperty('BookId');
       expect(response.body.data).toHaveProperty('Title', 'Book Test 1');
 
-      // Assign the bookId to a variable for use in other tests
-      bookId = response.body.data.BookId;
+      // // Assign the bookId to a variable for use in other tests
+      // bookId = response.body.data.BookId;
     });
 
     it('should not add a book with missing and invalid fields', async () => {
@@ -206,5 +206,45 @@ describe('Book Management Tests', () => {
       expect(response.statusCode).toBe(403);
       expect(response.body.message).toBe('Invalid token');
     });    
+  });
+
+  describe('Get Books', () => {
+    it('should get all books', async () => {
+      const response = await request(server)
+      .get('/books')
+      .set('Authorization', `Bearer ${token}`);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toBeInstanceOf(Array);
+    });
+
+    it('should get a book by title', async () => {
+      const response = await request(server)
+      .get('/books?title=Book Test 1')
+      .set('Authorization', `Bearer ${token}`);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toBeInstanceOf(Array);
+      expect(response.body).toContainEqual(expect.objectContaining({ title: 'Book Test 1' }));
+    });
+
+    it('should get a book by year', async () => {
+      const response = await request(server)
+      .get('/books?year=2020')
+      .set('Authorization', `Bearer ${token}`);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toBeInstanceOf(Array);
+      expect(response.body).toContainEqual(expect.objectContaining({ year: 2020 }));
+    }); 
+
+    it('should not retrieve a book with an invalid token', async () => {
+      const response = await request(server)
+      .get('/books')
+      .set('Authorization', `Bearer invalidtoken`);
+
+      expect(response.statusCode).toBe(403);
+      expect(response.body.message).toBe('Invalid token');
+    });
   });
 });
