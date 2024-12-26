@@ -85,9 +85,13 @@ This project allows users to manage their books by providing functionalities suc
 - Logout
   - POST /auth/logout
   - Headers: Authorization: Bearer <token>
-  - Response: { "message": "User logged out successfully" }
+  - Response: 
+    ```json
+    {
+      "message": "User logged out successfully"
+    }
 
-Books Management
+## Books Management
 
 - Get All Books
   - GET /books
@@ -102,22 +106,69 @@ Books Management
 - Add Book
   - POST /books
   - Headers: Authorization: Bearer <token>
-  - Request Body: { "title": "string", "year": "number", "author": "string", "summary": "string", "publisher": "string", "pageCount": "number", "readPage": "number", "reading": "boolean" }
-  - Response: { "message": "Book added successfully", "data": { "BookId": "string", "Title": "string", "DateAdded": "string" } }
+  - Request Body: 
+      ```json
+      {
+        "title": "string",
+        "year": "number",
+        "author": "string",
+        "summary": "string",
+        "publisher": "string",
+        "pageCount": "number",
+        "readPage": "number",
+        "reading": "boolean"
+      }
+
+  - Response: 
+      ```json
+      {
+        "message": "Book added successfully",
+        "data": {
+          "BookId": "string",
+          "UserId": "string",
+          "Title": "string",
+          "DateAdded": "string"
+        }
+      }
     
 - Update Book
   - PUT /books/:id
   - Headers: Authorization: Bearer <token>
-  - Request Body: { "title": "string", "year": "number", "author": "string", "summary": "string", "publisher": "string", "pageCount": "number", "readPage": "number", "reading": "boolean" }
-  - Response: { "message": "Book updated successfully", "book": "Book object" }
+  - Request Body: 
+    ```json
+    {
+      "title": "string",
+      "year": "number",
+      "author": "string",
+      "summary": "string",
+      "publisher": "string",
+      "pageCount": "number",
+      "readPage": "number",
+      "reading": "boolean"
+    }
+
+  - Response: 
+    ```json
+    {
+      "message": "Book updated successfully",
+      "book": "Book object"
+    }
 
 - Delete Book
   - DELETE /books/:id
   - Headers: Authorization: Bearer <token>
-  - Response: { "message": "Book deleted successfully" }
+  - Response: 
+    ```json
+    {
+      "message": "Book deleted successfully"
+    }
 
 ## Testing
 
 1. Run tests:
-    
+    ```sh
     npx jest
+
+## License
+
+This project is licensed under the `[MIT License](LICENSE)`.
