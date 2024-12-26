@@ -15,18 +15,18 @@ This project allows users to manage their books by providing functionalities suc
 
 2. Install dependencies:
     ```sh
-    pm install
+    npm install
 
 3. Set up environtment variables:
   - Create a .env file in the root directory and add the following variables:
-
+    ```sh
     DATABASE_URL=your_database_url 
     PORT=5000
     JWT_SECRET=your_jwt_secret
 
 
-  - I used PostgreSQL for the database so the .env could be looks similar like this:
-  
+- I used PostgreSQL for the database so the .env could be looks similar like this:
+    ```sh
     POSTGRES_HOST=localhost
     POSTGRES_DB=your_database_name
     POSTGRES_USER=your_database_user
@@ -36,14 +36,14 @@ This project allows users to manage their books by providing functionalities suc
     JWT_SECRET=your_jwt_secret
 
 4. Run migrations and seeders:
-    
+    ```sh
     npx sequelize-cli db:migrate
     npx sequelize-cli db:seed:all
 
 ## Usage
  
 1. Start the server:
-    
+    ```sh
     npm start
 
 2. The server will be running at http://localhost:5000.
@@ -54,13 +54,33 @@ This project allows users to manage their books by providing functionalities suc
 
 - Sign Up
   - POST /auth/signup
-  - Request Body: { "username": "string", "password": "string" }
-  - Response: { "message": "User created successfully" }
+  - Request Body: 
+    ```json
+    { 
+      "username": "string",
+      "password": "string"
+    }
+
+  - Response: 
+    ```json
+    { 
+      "message": "User created successfully"
+    }
 
 - Login
   - POST /auth/login
-  - Request Body: { "username": "string", "password": "string" }
-  - Response: { "token": "string" }
+  - Request Body: 
+    ```json
+    {
+      "username": "string",
+      "password": "string"
+    }
+
+  - Response: 
+    ```json
+    {
+      "token": "string"
+    }
 
 - Logout
   - POST /auth/logout
