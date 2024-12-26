@@ -14,7 +14,7 @@ This project allows users to manage their books by providing functionalities suc
     cd express-js-projects
 
 2. Install dependencies:
-    
+    ```sh
     pm install
 
 3. Set up environtment variables:
@@ -48,9 +48,9 @@ This project allows users to manage their books by providing functionalities suc
 
 2. The server will be running at http://localhost:5000.
 
-# API Documentation
+## API Documentation
 
-Authentication
+## Authentication
 
 - Sign Up
   - POST /auth/signup
