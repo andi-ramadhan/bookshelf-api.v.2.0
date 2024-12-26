@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
 const { nanoid } = require('nanoid');
 
 const User = sequelize.define('users', {
@@ -29,6 +29,8 @@ const User = sequelize.define('users', {
     allowNull: false,
   }
 }, 
+// If you want to hash the password before saving it to the database (hashing on database side)
+
 // {
 //   hooks: {
 //     beforeCreate: async (user) => {

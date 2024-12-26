@@ -16,8 +16,8 @@ const Book = sequelize.define('books_data', {
     type: DataTypes.STRING,
     allowNull: false,
     references: {
-      model: 'users', // Name of the Users table
-      key: 'userId' // Column name in Users table
+      model: 'users', // Name of the users table
+      key: 'userId' // Column name in users table
     }
   },
   year: {

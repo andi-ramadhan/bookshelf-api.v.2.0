@@ -8,7 +8,7 @@ afterAll(() => {
 
 let token;
 // let userId;
-// let bookId;
+let bookId;
 
 describe('Authentication Tests', () => {
   describe('User Sign Up', () => {
@@ -162,8 +162,8 @@ describe('Book Management Tests', () => {
       expect(response.body.data).toHaveProperty('BookId');
       expect(response.body.data).toHaveProperty('Title', 'Book Test 1');
 
-      // // Assign the bookId to a variable for use in other tests
-      // bookId = response.body.data.BookId;
+      // Assign the bookId to a variable for use in other tests
+      bookId = response.body.data.BookId;
     });
 
     it('should not add a book with missing and invalid fields', async () => {
@@ -245,6 +245,123 @@ describe('Book Management Tests', () => {
 
       expect(response.statusCode).toBe(403);
       expect(response.body.message).toBe('Invalid token');
+    });
+  });
+
+  describe('Get Book by ID', () => {
+    it('should get a book by ID', async () => {
+      const response = await request(server)
+      .get(`/books/${bookId}`)
+      .set('Authorization', `Bearer ${token}`);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.data).toHaveProperty('book');
+      expect(response.body.data.book).toHaveProperty('bookId', bookId);
+    });
+
+    it('should not retrieve a book with an invalid ID', async () => {
+      const response = await request(server)
+      .get('/books/invalidBookId')
+      .set('Authorization', `Bearer ${token}`);
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body.message).toBe('Book id not found');
+    });
+  });
+
+  describe('Update Book', () => {
+    it('should update a book with valid data', async () => {
+      const response = await request(server)
+        .put(`/books/${bookId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          title: 'Updated Book Test',
+          year: 2021
+        });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toHaveProperty('book');
+      expect(response.body.book).toHaveProperty('title', 'Updated Book Test');
+      expect(response.body.book).toHaveProperty('year', 2021);
+    });
+
+    it('should not update a book with invalid data', async () => {
+      const response = await request(server)
+        .put(`/books/${bookId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          title: '',
+          year: -1
+        });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.errors).toBeInstanceOf(Array);
+      expect(response.body.errors).toContainEqual(expect.objectContaining({ msg: 'Title is required' }));
+      expect(response.body.errors).toContainEqual(expect.objectContaining({ msg: 'Year must be a non-negative number' }));
+    });
+
+    it('should not update a book with an invalid token', async () => {
+      const response = await request(server)
+        .put(`/books/${bookId}`)
+        .set('Authorization', `Bearer invalidtoken`)
+        .send({
+          title: 'Updated Book Test',
+          year: 2021
+        });
+
+      expect(response.statusCode).toBe(403);
+      expect(response.body.message).toBe('Invalid token');
+    });
+
+    it('should not update a book with an invalid book ID', async () => {
+      const response = await request(server)
+        .put(`/books/invalidBookId`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          title: 'Updated Book Test',
+          year: 2021
+        });
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toEqual({ error: 'Book not found' });
+    });
+  });
+
+  describe('Delete Book', () => {
+    it('should delete a book by ID', async () => {
+      const response = await request(server)
+        .delete(`/books/${bookId}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toEqual({ message: 'Book deleted successfully' });
+    });
+
+    it('should not delete a book with an invalid ID', async () => {
+      const response = await request(server)
+        .delete('/books/invalidBookId')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toEqual({ error: 'Book not found' });
+    });
+
+    it('should not delete a book with an invalid token', async () => {
+      const response = await request(server)
+        .delete(`/books/${bookId}`)
+        .set('Authorization', `Bearer invalidtoken`);
+
+      expect(response.statusCode).toBe(403);
+      expect(response.body.message).toBe('Invalid token');
+    });
+
+    it('should not delete a book that does not exist', async () => {
+      const response = await request(server)
+        .delete(`/books/nonExistentBookId`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toEqual({ error: 'Book not found' });
     });
   });
 });
