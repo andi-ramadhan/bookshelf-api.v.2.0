@@ -38,7 +38,6 @@ This project allows users to manage their books by providing functionalities suc
 4. Run migrations and seeders:
     ```sh
     npx sequelize-cli db:migrate
-    npx sequelize-cli db:seed:all
 
 ## Usage
  
