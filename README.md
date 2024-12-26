@@ -171,4 +171,4 @@ This project allows users to manage their books by providing functionalities suc
 
 ## License
 
-This project is licensed under the `[MIT License](LICENSE)`.
+This project is licensed under the [MIT License](LICENSE).
