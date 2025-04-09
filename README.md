@@ -10,7 +10,7 @@ This project allows users to manage their books by providing functionalities suc
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/express-js-projects.git
+    git clone https://github.com/andi-ramadhan/express-js-projects.git
     cd express-js-projects
 
 2. Install dependencies:
